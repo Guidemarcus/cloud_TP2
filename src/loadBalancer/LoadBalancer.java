@@ -33,7 +33,7 @@ public class LoadBalancer implements LoadBalancerInterface {
 		try {
 			LoadBalancerInterface stub = (LoadBalancerInterface) UnicastRemoteObject
 					.exportObject(this, 0);
-			Registry registry = LocateRegistry.createRegistry(5001);
+			Registry registry = LocateRegistry.createRegistry("132.207.12.44", 5001);
 			registry.bind("load_balancer", stub);
 		} catch (ConnectException e) {
 			System.err.println("Impossible de se connecter au registre RMI. Est-ce que rmiregistry est lancé ?");
@@ -42,6 +42,11 @@ public class LoadBalancer implements LoadBalancerInterface {
 		} catch (Exception e) {
 			System.err.println("Erreur: " + e.getMessage());
 		}
+	}
+	
+	@Override
+	public void execute() throws RemoteException {
+		System.out.println("Hit inside the execute method");
 	}
 }
 

@@ -16,6 +16,7 @@
 		<delete dir="bin" />
 		<delete file="loadBalancer.jar" />
 		<delete file="shared.jar" />
+		<delete file="client.jar" />
 	</target>
 	<target depends="init" name="build-class">
 		<javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false">
@@ -26,5 +27,6 @@
 	<target depends="build-class" name="build-jar">
 		<jar destfile="loadBalancer.jar" basedir="bin" includes="loadBalancer/**" update="false" />
 		<jar destfile="shared.jar" basedir="bin" includes="shared/**" update="false" />
+		<jar destfile="client.jar" basedir="bin" includes="client/**" update="false" />
 	</target>
 </project>
