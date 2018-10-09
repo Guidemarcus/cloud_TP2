@@ -48,6 +48,7 @@ public class Client {
 			System.out.println("Access exception thrown");
 			System.out.println("Erreur: " + e.getMessage());
 		} catch (RemoteException e) {
+			e.printStackTrace();
 			System.out.println("Remote exception throws");
 			System.out.println("Erreur: " + e.getMessage());
 		}
