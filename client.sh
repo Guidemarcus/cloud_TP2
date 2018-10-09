@@ -16,4 +16,4 @@ java -cp "$basepath"/client.jar:"$basepath"/shared.jar \
   -Djava.rmi.client.codebase=file:"$basepath"/shared.jar \
   -Djava.security.policy="$basepath"/policy \
   -Djava.rmi.client.hostname="$IPADDR" \
-  client.Client $*
+  ca.polymtl.inf8480.tp2.client.Client $*

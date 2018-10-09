@@ -1,4 +1,4 @@
-package client;
+package ca.polymtl.inf8480.tp2.client;
 
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
@@ -6,7 +6,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-import shared.LoadBalancerInterface;
+import ca.polymtl.inf8480.tp2.shared.LoadBalancerInterface;
 
 public class Client {
 	public static void main(String[] args) throws Exception {
@@ -45,8 +45,10 @@ public class Client {
 			System.out.println("Erreur: Le nom '" + e.getMessage()
 					+ "' n'est pas défini dans le registre.");
 		} catch (AccessException e) {
+			System.out.println("Access exception thrown");
 			System.out.println("Erreur: " + e.getMessage());
 		} catch (RemoteException e) {
+			System.out.println("Remote exception throws");
 			System.out.println("Erreur: " + e.getMessage());
 		}
 

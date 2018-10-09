@@ -1,4 +1,4 @@
-package loadBalancer;
+package ca.polymtl.inf8480.tp2.loadBalancer;
 
 import java.rmi.ConnectException;
 import java.rmi.RemoteException;
@@ -12,7 +12,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 
-import shared.LoadBalancerInterface;
+import ca.polymtl.inf8480.tp2.shared.LoadBalancerInterface;
 
 public class LoadBalancer implements LoadBalancerInterface {
 	
@@ -33,8 +33,8 @@ public class LoadBalancer implements LoadBalancerInterface {
 		try {
 			LoadBalancerInterface stub = (LoadBalancerInterface) UnicastRemoteObject
 					.exportObject(this, 0);
-			Registry registry = LocateRegistry.createRegistry("132.207.12.44", 5001);
-			registry.bind("load_balancer", stub);
+			Registry registry = LocateRegistry.getRegistry(5001);
+			registry.rebind("load_balancer", stub);
 		} catch (ConnectException e) {
 			System.err.println("Impossible de se connecter au registre RMI. Est-ce que rmiregistry est lancé ?");
 			System.err.println();
