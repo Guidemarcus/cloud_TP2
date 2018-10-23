@@ -1,9 +1,3 @@
-grant {
+grant codeBase "file:/-" {
 	permission java.security.AllPermission;
-	permission java.net.SocketPermission "132.207.12.36:5001", "connect, resolve";
-    permission java.net.SocketPermission "132.207.12.36:5001", "connect, resolve";
-    permission java.net.SocketPermission "132.207.12.36:80", "connect, resolve";
-    permission java.net.SocketPermission "127.0.0.1:5001", "connect, resolve";
-    permission java.net.SocketPermission "127.0.0.1:5001", "connect, resolve";
-    permission java.net.SocketPermission "127.0.0.1:80", "connect, resolve";
 };
