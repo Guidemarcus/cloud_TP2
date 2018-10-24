@@ -7,6 +7,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 import ca.polymtl.inf8480.tp2.shared.LoadBalancerInterface;
+import ca.polymtl.inf8480.tp2.shared.ServiceDeNomInterface;
 
 public class Client {
 	public static void main(String[] args) throws Exception {
@@ -21,7 +22,8 @@ public class Client {
 		Client client = new Client(distantHostname);
 	}
 	
-	private LoadBalancerInterface distantServerStub = null;
+	//private LoadBalancerInterface distantServerStub = null;
+	private ServiceDeNomInterface distantServerStub = null;
 
 	public Client(String distantServerHostname) {
 		super();
@@ -33,15 +35,36 @@ public class Client {
 		distantServerStub = loadServerStub(distantServerHostname);
 	}
 
-	private LoadBalancerInterface loadServerStub(String hostName) {
+	/*private LoadBalancerInterface loadServerStub(String hostName) {
 		LoadBalancerInterface stub = null;
 
 		try {
 			System.out.println("Client connecting to the server " + hostName);
 			Registry registry = LocateRegistry.getRegistry(hostName, 5001);
 			stub = (LoadBalancerInterface) registry.lookup("load_balancer");
-			System.out.println("The stub is");
-			System.out.println(stub);
+			stub.execute();
+		} catch (NotBoundException e) {
+			System.out.println("Erreur: Le nom '" + e.getMessage()
+					+ "' n'est pas défini dans le registre.");
+		} catch (AccessException e) {
+			System.out.println("Access exception thrown");
+			System.out.println("Erreur: " + e.getMessage());
+		} catch (RemoteException e) {
+			e.printStackTrace();
+			System.out.println("Remote exception throws");
+			System.out.println("Erreur: " + e.getMessage());
+		}
+
+		return stub;
+	}*/
+	
+	private ServiceDeNomInterface loadServerStub(String hostName) {
+		ServiceDeNomInterface stub = null;
+
+		try {
+			System.out.println("Client connecting to the server " + hostName);
+			Registry registry = LocateRegistry.getRegistry(hostName, 5001);
+			stub = (ServiceDeNomInterface) registry.lookup("service_de_nom");
 			stub.execute();
 		} catch (NotBoundException e) {
 			System.out.println("Erreur: Le nom '" + e.getMessage()
