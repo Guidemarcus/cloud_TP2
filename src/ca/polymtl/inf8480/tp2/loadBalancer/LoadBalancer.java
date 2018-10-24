@@ -32,7 +32,7 @@ public class LoadBalancer implements LoadBalancerInterface {
 
 		try {
 			LoadBalancerInterface stub = (LoadBalancerInterface) UnicastRemoteObject
-					.exportObject(this, 0);
+					.exportObject(this, 5002);
 			Registry registry = LocateRegistry.getRegistry(5001);
 			registry.rebind("load_balancer", stub);
 		} catch (ConnectException e) {

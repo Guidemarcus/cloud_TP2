@@ -19,6 +19,7 @@ if [ -z "$1" ]
 fi
 
 java -cp "$basepath"/loadBalancer.jar:"$basepath"/shared.jar \
+  -Djava.rmi.loadBalancer.codebase=file:"$basepath"/shared.jar \
   -Djava.security.policy="$basepath"/policy \
   -Djava.rmi.loadBalancer.hostname="$IPADDR" \
   ca.polymtl.inf8480.tp2.loadBalancer.LoadBalancer

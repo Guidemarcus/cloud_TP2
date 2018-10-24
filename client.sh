@@ -12,6 +12,12 @@ HELP:
 
 EndOfMessage
 
+IPADDR=$1
+if [ -z "$1" ]
+  then
+    IPADDR="127.0.0.1"
+fi
+
 java -cp "$basepath"/client.jar:"$basepath"/shared.jar \
   -Djava.rmi.client.codebase=file:"$basepath"/shared.jar \
   -Djava.security.policy="$basepath"/policy \

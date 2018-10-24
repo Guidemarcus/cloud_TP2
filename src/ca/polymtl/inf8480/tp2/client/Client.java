@@ -40,6 +40,8 @@ public class Client {
 			System.out.println("Client connecting to the server " + hostName);
 			Registry registry = LocateRegistry.getRegistry(hostName, 5001);
 			stub = (LoadBalancerInterface) registry.lookup("load_balancer");
+			System.out.println("The stub is");
+			System.out.println(stub);
 			stub.execute();
 		} catch (NotBoundException e) {
 			System.out.println("Erreur: Le nom '" + e.getMessage()
