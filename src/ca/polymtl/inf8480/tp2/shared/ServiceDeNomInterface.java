@@ -3,6 +3,11 @@ package ca.polymtl.inf8480.tp2.shared;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+import java.util.ArrayList;
+
+import ca.polymtl.inf8480.tp2.shared.ServeurDisponibleDTO;
+
 public interface ServiceDeNomInterface extends Remote {
-	void execute() throws RemoteException;
+	boolean authenticate(String login, String password, String hostName) throws RemoteException;
+	ArrayList<ServeurDisponibleDTO> getAvailableCalculServers() throws RemoteException;
 }

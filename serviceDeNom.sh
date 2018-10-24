@@ -6,20 +6,17 @@ popd > /dev/null
 
 cat << EndOfMessage
 HELP: 
-./serviceDeNom.sh ip_address
-	- ip_address: (OPTIONAL) L'addresse ip du serveur.
-	  Si l'arguement est non fourni, on conisdère que le serveur est local (ip_address = 127.0.0.1)
+./serviceDeNom.sh
 
 EndOfMessage
 
-IPADDR=$1
-if [ -z "$1" ]
-  then
-    IPADDR="127.0.0.1"
-fi
+echo "ServiceDeNom server is ready !"
+rm -rf ServiceDeNom
+mkdir ServiceDeNom
+echo $HOSTNAME > ServiceDeNom/service_de_nom.txt
 
 java -cp "$basepath"/serviceDeNom.jar:"$basepath"/shared.jar \
-  -Djava.rmi.serviceDeNom.codebase=file:"$basepath"/shared.jar \
-  -Djava.security.policy="$basepath"/policy \
-  -Djava.rmi.serviceDeNom.hostname="$IPADDR" \
-  ca.polymtl.inf8480.tp2.serviceDeNom.ServiceDeNom
+-Djava.rmi.serviceDeNom.codebase=file:"$basepath"/shared.jar \
+-Djava.security.policy="$basepath"/policy \
+-Djava.rmi.serviceDeNom.hostname="$HOSTNAME" \
+ca.polymtl.inf8480.tp2.serviceDeNom.ServiceDeNom

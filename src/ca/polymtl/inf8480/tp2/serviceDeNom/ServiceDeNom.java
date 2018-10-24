@@ -9,12 +9,17 @@ import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.util.ArrayList;
 import java.io.FileReader;
 import java.io.FileWriter;
 
 import ca.polymtl.inf8480.tp2.shared.ServiceDeNomInterface;
+import ca.polymtl.inf8480.tp2.shared.ServeurDisponibleDTO;
 
 public class ServiceDeNom implements ServiceDeNomInterface {
+	private ArrayList<ServeurDisponibleDTO> serveursDisponibles;
+	private static final String login = "admin";
+	private static final String password = "password";
 	
 	public static void main(String[] args) {
 		ServiceDeNom loadBalancer = new ServiceDeNom();
@@ -23,6 +28,7 @@ public class ServiceDeNom implements ServiceDeNomInterface {
 
 	public ServiceDeNom() {
 		super();
+		this.serveursDisponibles = new ArrayList<ServeurDisponibleDTO>();
 	}
 
 	private void run() {
@@ -43,9 +49,54 @@ public class ServiceDeNom implements ServiceDeNomInterface {
 		}
 	}
 	
+	/*
+	 * Authenticate the load balancer with the name server.
+	 * @param  String login
+	 * @param  String password
+	 * @param  String hostName
+	 * @return boolean
+	 */
 	@Override
-	public void execute() throws RemoteException {
-		System.out.println("Hit inside the execute method of the service de nom");
+	public boolean authenticate(String login, String password, String hostName) throws RemoteException {
+		if (ServiceDeNom.login.equals(login) && ServiceDeNom.password.equals(password)) {
+			if (! this.alreadyExist(hostName)) {
+				this.serveursDisponibles.add(new ServeurDisponibleDTO(hostName, ServeurDisponibleDTO.SERVER_LOAD_BALANCER));
+			}
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/*
+	 * Check if a hostname already exist inside the servers array
+	 * @param  String hostname
+	 * @return boolean
+	 */
+	private boolean alreadyExist(String hostName) {
+		for (ServeurDisponibleDTO server: this.serveursDisponibles) {
+			if (server.getHostName().equals(hostName)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/*
+	 * Get the available calcul servers
+	 * @return ArrayList<ServeurDisponibleDTO>
+	 */
+	@Override
+	public ArrayList<ServeurDisponibleDTO> getAvailableCalculServers() throws RemoteException {
+		ArrayList<ServeurDisponibleDTO> tempServers = new ArrayList<ServeurDisponibleDTO>();
+		for (ServeurDisponibleDTO server : this.serveursDisponibles) {
+			if (server.getType().equals(ServeurDisponibleDTO.SERVER_CALCUL)) {
+				tempServers.add(server);
+			}
+		}
+		
+		return tempServers;
 	}
 }
 
