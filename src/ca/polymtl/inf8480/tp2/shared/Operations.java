@@ -1,3 +1,5 @@
+package ca.polymtl.inf8480.tp2.shared;
+
 /**
  * Methodes utilitaires pour effectuer les operations du TP2.
  * 

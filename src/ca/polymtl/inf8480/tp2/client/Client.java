@@ -17,10 +17,14 @@ public class Client {
 	private ServiceDeNomInterface serviceDeNomStub = null;
 	
 	public static void main(String[] args) throws Exception {
-		Client client = new Client(args[0]);
+		if (args.length != 2) {
+			throw new Exception("Please provide good arguments. See instructions.");
+		}
+		
+		Client client = new Client(args[0], args[1]);
 	}
 
-	public Client(String serverDeNomHostName) {
+	public Client(String serverDeNomHostName, String path) {
 		super();
 
 		if (System.getSecurityManager() == null) {
@@ -28,16 +32,16 @@ public class Client {
 		}
 		
 		serviceDeNomStub = loadServiceDeNomStub(serverDeNomHostName);
+		loadBalancerServerStub(path);
 	}
 
-	/*private LoadBalancerInterface loadServerStub(String hostName) {
+	private LoadBalancerInterface loadBalancerServerStub(String path) {
 		LoadBalancerInterface stub = null;
 
 		try {
-			System.out.println("Client connecting to the server " + hostName);
-			Registry registry = LocateRegistry.getRegistry(hostName, 5001);
+			Registry registry = LocateRegistry.getRegistry(this.serviceDeNomStub.getLoadBalancer().getHostName(), 5001);
 			stub = (LoadBalancerInterface) registry.lookup("load_balancer");
-			stub.execute();
+			stub.execute(path);
 		} catch (NotBoundException e) {
 			System.out.println("Erreur: Le nom '" + e.getMessage()
 					+ "' n'est pas défini dans le registre.");
@@ -48,10 +52,12 @@ public class Client {
 			e.printStackTrace();
 			System.out.println("Remote exception throws");
 			System.out.println("Erreur: " + e.getMessage());
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
 
 		return stub;
-	}*/
+	}
 	
 	/*
 	 * Get the stub from the service de nom server

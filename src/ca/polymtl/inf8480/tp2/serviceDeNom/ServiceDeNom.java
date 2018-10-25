@@ -69,6 +69,21 @@ public class ServiceDeNom implements ServiceDeNomInterface {
 	}
 	
 	/*
+	 * Add a calcul server to the array of available servers
+	 * @param 
+	 */
+	@Override
+	public void addCalculServer(String hostName, int capacity) throws RemoteException {
+		if (! this.alreadyExist(hostName)) {
+			ServeurDisponibleDTO server = new ServeurDisponibleDTO(hostName, ServeurDisponibleDTO.SERVER_CALCUL);
+			server.setCapacity(capacity);
+			this.serveursDisponibles.add(server);
+			
+			System.out.println("The server the calcul was added");
+		}
+	}
+	
+	/*
 	 * Check if a hostname already exist inside the servers array
 	 * @param  String hostname
 	 * @return boolean
@@ -97,6 +112,38 @@ public class ServiceDeNom implements ServiceDeNomInterface {
 		}
 		
 		return tempServers;
+	}
+	
+	/*
+	 * Remove a server de calcul if he goes down like a little bitch.
+	 * @param  String hostName
+	 * @return void
+	 */
+	@Override
+	public boolean removeCalculServer(String hostName) throws RemoteException {
+		for (ServeurDisponibleDTO server : this.serveursDisponibles) {
+			if (server.getHostName().equals(hostName)) {
+				this.serveursDisponibles.remove(server);
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/*
+	 * Get the load balancer server object
+	 * @return ServeurDisponibleDTO
+	 */
+	@Override
+	public ServeurDisponibleDTO getLoadBalancer() throws RemoteException, Exception {
+		for (ServeurDisponibleDTO server : this.serveursDisponibles) {
+			if (server.getType().equals(ServeurDisponibleDTO.SERVER_LOAD_BALANCER)) {
+				return server;
+			}
+		}
+		
+		throw new Exception("Server not found.");
 	}
 }
 
