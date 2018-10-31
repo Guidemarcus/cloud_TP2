@@ -104,6 +104,7 @@ public class ServerCalcul implements ServerCalculInterface {
 	 */
 	 @Override
 	public int calculate(ArrayList<InstructionDTO> instructions) throws RemoteException, OperandInvalidException, CanPerformCalculationException {
+		System.out.println("We have " + this.nInstructions + " instructions right now");
 		this.canPerformlock.lock();
 		try {
 			if (! this.canPerformCalculation(this.calculateT(ServerCalcul.nInstructions + instructions.size()))) {
@@ -127,7 +128,7 @@ public class ServerCalcul implements ServerCalculInterface {
 				this.calculationLock.unlock();
 				throw new OperandInvalidException("Invalid operation");
 			}
-			//response = transformResponseWithMaliciousness(response);
+			response = transformResponseWithMaliciousness(response);
 		}
 		
 		this.nInstructions -= instructions.size();
@@ -145,7 +146,7 @@ public class ServerCalcul implements ServerCalculInterface {
 		// Number between 0 and 100
 		Random random = new Random();
 		int randomNumber = random.nextInt(100 + 1);
-		if (randomNumber <= this.maliciousness) {
+		if (randomNumber < this.maliciousness) {
 			return random.nextInt(100000); // Return a wrong answer
 		}
 		
@@ -158,7 +159,6 @@ public class ServerCalcul implements ServerCalculInterface {
 	 * @return int
 	 */
 	private int calculateT(int lengthOfInstructions) {
-		System.out.println("We have " + lengthOfInstructions + " instructions right now");
 		int numerateur = lengthOfInstructions - this.capacity;
 		int denominateur = 4 * this.capacity;
 		return (int) ((numerateur / denominateur)) * 100;

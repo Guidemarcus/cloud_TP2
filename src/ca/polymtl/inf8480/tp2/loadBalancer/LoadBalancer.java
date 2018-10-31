@@ -120,11 +120,11 @@ public class LoadBalancer implements LoadBalancerInterface {
 		Thread stopThread = new Thread(new HandleStopOperation());
         stopThread.start();
 		
-		int n = 1; // Number of threads 
-        //for (int i = 0; i < n; i++) { 
+		int n = 6; // Number of threads 
+        for (int i = 0; i < n; i++) { 
             Thread executeThread = new Thread(new MultithreadingExecute()); 
             executeThread.start();
-        //}
+        }
 	}
 	
 	/*
@@ -162,15 +162,18 @@ public class LoadBalancer implements LoadBalancerInterface {
 		while (LoadBalancer.hasInstructions) {
 			try {
 				ArrayList<InstructionDTO> localInstructions = LoadBalancer.getInstructions(1, name);
+				if (localInstructions != null && localInstructions.size() == 0) {
+					break;
+				}
 				ArrayList<ServeurDisponibleDTO> serveursDeCalcul = LoadBalancer.serviceDeNomStub.getAvailableCalculServers();
 				for (ServeurDisponibleDTO serveurDeCalcul : serveursDeCalcul) {
 					try {
 						Registry registry = LocateRegistry.getRegistry(serveurDeCalcul.getHostName(), 5001);
 						ServerCalculInterface stub = (ServerCalculInterface) registry.lookup("server_calcul");
 						int response = stub.calculate(localInstructions);
-						System.out.println("Response : " + response);
 						for (int i = 0; i < localInstructions.size(); i++) {
 							localInstructions.get(i).setResponse(response);
+							System.out.println("Inserting at index " + localInstructions.get(i).getIndex() + " the value " + localInstructions.get(i).getResponse());
 							LoadBalancer.instructions.set(localInstructions.get(i).getIndex(), localInstructions.get(i));
 						}
 						break;
@@ -183,6 +186,11 @@ public class LoadBalancer implements LoadBalancerInterface {
 					} catch (NotBoundException e) {
 						System.out.println("Hit inside the inner not bound exception");
 					}
+				}
+				// Put the instruction back in the pile.
+				for (InstructionDTO instruction : localInstructions) {
+					instruction.setIsBeingCalculated(false);
+					LoadBalancer.instructions.set(instruction.getIndex(), instruction);
 				}
 			} catch (RemoteException e) {
 				System.out.println("Hit inside the outer RemoteException");
