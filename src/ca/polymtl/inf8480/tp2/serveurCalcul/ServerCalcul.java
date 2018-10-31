@@ -15,6 +15,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import ca.polymtl.inf8480.tp2.shared.ServerCalculInterface;
 import ca.polymtl.inf8480.tp2.shared.ServiceDeNomInterface;
@@ -24,6 +26,9 @@ import ca.polymtl.inf8480.tp2.shared.OperandInvalidException;
 import ca.polymtl.inf8480.tp2.shared.CanPerformCalculationException;
 
 public class ServerCalcul implements ServerCalculInterface {
+	private static int nInstructions = 0;
+	private final Lock canPerformlock = new ReentrantLock(true);
+	private final Lock calculationLock = new ReentrantLock(true);
 	
 	public static void main(String[] args) throws Exception {
 		if (args.length != 4) {
@@ -99,13 +104,18 @@ public class ServerCalcul implements ServerCalculInterface {
 	 */
 	 @Override
 	public int calculate(ArrayList<InstructionDTO> instructions) throws RemoteException, OperandInvalidException, CanPerformCalculationException {
-		System.out.println("Hit inside the calculate method");		
-		if (! this.canPerformCalculation(this.calculateT(instructions.size()))) {
-			System.out.println("The server did not perform the calculations");
-			throw new CanPerformCalculationException("Cannot perform this calculation");
+		this.canPerformlock.lock();
+		try {
+			if (!this.canPerformCalculation(this.calculateT(this.nInstructions + instructions.size()))) {
+				throw new CanPerformCalculationException("Cannot perform this calculation");
+			}
+			this.nInstructions += instructions.size();
+		} catch(CanPerformCalculationException e) {
+			throw e;
 		}
-		System.out.println("The server will perform the calculations");
+		this.canPerformlock.unlock();
 		
+		this.calculationLock.lock();
 		int response = 0;
 		for(InstructionDTO instruction : instructions) {
 			if (instruction.getOperation().equals(InstructionDTO.OPERATION_PELL)) {
@@ -115,9 +125,29 @@ public class ServerCalcul implements ServerCalculInterface {
 			} else {
 				throw new OperandInvalidException("Invalid operation");
 			}
+			response = transformResponseWithMaliciousness(response);
 		}
 		
+		this.nInstructions -= instructions.size();
+		this.calculationLock.unlock();
+		
 		return response;
+	}
+	
+	/*
+	 * Transform a given response depending on the maliciousness of the calcul server
+	 * @param  int oldResponse
+	 * @return int newResponse
+	 */
+	private int transformResponseWithMaliciousness(int oldResponse) {
+		// Number between 0 and 100
+		Random random = new Random();
+		int randomNumber = random.nextInt(100 + 1);
+		if (randomNumber <= this.maliciousness) {
+			return random.nextInt(100000); // Return a wrong answer
+		}
+		
+		return oldResponse;
 	}
 	
 	/*
@@ -126,6 +156,7 @@ public class ServerCalcul implements ServerCalculInterface {
 	 * @return int
 	 */
 	private int calculateT(int lengthOfInstructions) {
+		System.out.println("We have " + lengthOfInstructions + " instructions right now");
 		int numerateur = lengthOfInstructions - this.capacity;
 		int denominateur = 4 * this.capacity;
 		return (int) ((numerateur / denominateur)) * 100;

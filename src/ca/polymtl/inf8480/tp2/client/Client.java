@@ -17,14 +17,14 @@ public class Client {
 	private ServiceDeNomInterface serviceDeNomStub = null;
 	
 	public static void main(String[] args) throws Exception {
-		if (args.length != 2) {
+		if (args.length != 3) {
 			throw new Exception("Please provide good arguments. See instructions.");
 		}
 		
-		Client client = new Client(args[0], args[1]);
+		Client client = new Client(args[0], args[1], args[2]);
 	}
 
-	public Client(String serverDeNomHostName, String path) {
+	public Client(String serverDeNomHostName, String path, String mode) {
 		super();
 
 		if (System.getSecurityManager() == null) {
@@ -32,16 +32,16 @@ public class Client {
 		}
 		
 		serviceDeNomStub = loadServiceDeNomStub(serverDeNomHostName);
-		loadBalancerServerStub(path);
+		loadBalancerServerStub(path, mode);
 	}
 
-	private LoadBalancerInterface loadBalancerServerStub(String path) {
+	private LoadBalancerInterface loadBalancerServerStub(String path, String mode) {
 		LoadBalancerInterface stub = null;
 
 		try {
 			Registry registry = LocateRegistry.getRegistry(this.serviceDeNomStub.getLoadBalancer().getHostName(), 5001);
 			stub = (LoadBalancerInterface) registry.lookup("load_balancer");
-			stub.execute(path);
+			stub.execute(path, mode);
 		} catch (NotBoundException e) {
 			System.out.println("Erreur: Le nom '" + e.getMessage()
 					+ "' n'est pas défini dans le registre.");
