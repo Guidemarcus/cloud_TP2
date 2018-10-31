@@ -49,7 +49,6 @@ public class InstructionDTO implements Serializable {
 	
 	public void setResponse(int response) {
 		if (this.response == response) {
-			System.out.println("Is confirmed");
 			this.isConfirmed = true;
 		}
 		this.response = response;
@@ -77,5 +76,9 @@ public class InstructionDTO implements Serializable {
 		}
 		
 		return false;
+	}
+	
+	public boolean isFinished() {
+		return this.hasResponse && this.isConfirmed && ! this.isBeingCalculated;
 	}
 }

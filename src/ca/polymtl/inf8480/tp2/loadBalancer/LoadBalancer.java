@@ -26,10 +26,10 @@ import ca.polymtl.inf8480.tp2.shared.OperandInvalidException;
 import ca.polymtl.inf8480.tp2.shared.ServerCalculInterface;
 
 public class LoadBalancer implements LoadBalancerInterface {
-	private static ArrayList<InstructionDTO> instructions = new ArrayList<InstructionDTO>();
-	private static boolean hasInstructions = true;
-	private static boolean securise = false;
-	private final Lock calculationLock = new ReentrantLock(true);
+	public static ArrayList<InstructionDTO> instructions = new ArrayList<InstructionDTO>();
+	public static boolean hasInstructions = true;
+	public static boolean securise = false;
+	public static Lock calculationLock = new ReentrantLock(true);
 	
 	public static void main(String[] args) throws Exception {
 		if (args.length != 2) {
@@ -42,7 +42,7 @@ public class LoadBalancer implements LoadBalancerInterface {
 		loadBalancer.registerLoadBalancerToTheServiceDeNomServer(args[0]);
 	}
 	
-	private ServiceDeNomInterface serviceDeNomStub = null;
+	private static ServiceDeNomInterface serviceDeNomStub = null;
 	private static final String LOGIN = "admin";
 	private static final String PASSWORD = "password";
 
@@ -116,7 +116,15 @@ public class LoadBalancer implements LoadBalancerInterface {
 		this.instructions.clear();
 		this.hasInstructions = true;
 		this.readFile(path);
-		this.executeInstructions();
+		
+		Thread stopThread = new Thread(new HandleStopOperation());
+        stopThread.start();
+		
+		int n = 1; // Number of threads 
+        //for (int i = 0; i < n; i++) { 
+            Thread executeThread = new Thread(new MultithreadingExecute()); 
+            executeThread.start();
+        //}
 	}
 	
 	/*
@@ -149,35 +157,43 @@ public class LoadBalancer implements LoadBalancerInterface {
 	 * Excecute the instructions send by the client
 	 * @return void
 	 */
-	private void executeInstructions() {
-		while (this.hasInstructions) {
+	public static void executeInstructions(String name) {
+		long start = System.currentTimeMillis();
+		while (LoadBalancer.hasInstructions) {
 			try {
-				ArrayList<InstructionDTO> localInstructions = getInstructions(1);
-				ArrayList<ServeurDisponibleDTO> serveursDeCalcul = this.serviceDeNomStub.getAvailableCalculServers();
+				ArrayList<InstructionDTO> localInstructions = LoadBalancer.getInstructions(1, name);
+				ArrayList<ServeurDisponibleDTO> serveursDeCalcul = LoadBalancer.serviceDeNomStub.getAvailableCalculServers();
 				for (ServeurDisponibleDTO serveurDeCalcul : serveursDeCalcul) {
+					try {
 						Registry registry = LocateRegistry.getRegistry(serveurDeCalcul.getHostName(), 5001);
 						ServerCalculInterface stub = (ServerCalculInterface) registry.lookup("server_calcul");
 						int response = stub.calculate(localInstructions);
-						if (localInstructions.size() > 0) {
-							System.out.println("Sending to " + serveurDeCalcul.getHostName() + " to calculate " + localInstructions.get(0).getOperande() + " and response is : " + response);
-						}
+						System.out.println("Response : " + response);
 						for (int i = 0; i < localInstructions.size(); i++) {
 							localInstructions.get(i).setResponse(response);
-							this.instructions.set(localInstructions.get(i).getIndex(), localInstructions.get(i));
+							LoadBalancer.instructions.set(localInstructions.get(i).getIndex(), localInstructions.get(i));
 						}
 						break;
+					} catch (CanPerformCalculationException e) {
+						System.out.println("Hit inside the inner CanPerformCalculationException");
+					} catch (OperandInvalidException e) {
+						System.out.println("Hit inside the inner OperandInvalidException");
+					} catch (RemoteException e) {
+						System.out.println("Hit inside the inner RemoteException");
+					} catch (NotBoundException e) {
+						System.out.println("Hit inside the inner not bound exception");
+					}
 				}
-			} catch (CanPerformCalculationException e) {
-			} catch (OperandInvalidException e) {
 			} catch (RemoteException e) {
-			} catch (Exception e) {
-				e.printStackTrace();
+				System.out.println("Hit inside the outer RemoteException");
 			}
 		}
+		long finish = System.currentTimeMillis();
+		long timeElapsed = finish - start;
+		System.out.println("Time is : " + timeElapsed);
 		int total = 0;
-		for (InstructionDTO instruction : this.instructions) {
-			total += instruction.getResponse();
-			total %= 4000;
+		for (InstructionDTO instruction : LoadBalancer.instructions) {
+			total = (total + instruction.getResponse()) % 4000;
 		}
 		System.out.println("The response is :" + total);
 	}
@@ -187,28 +203,47 @@ public class LoadBalancer implements LoadBalancerInterface {
 	 * @param  int maxSizeOfInstructionsToCompute
 	 * @return ArrayList<InstructionDTO> instructionsToCompute
 	 */
-	private ArrayList<InstructionDTO> getInstructions(int maxSizeOfInstructionsToCompute) {
-		this.calculationLock.lock();
+	private static ArrayList<InstructionDTO> getInstructions(int maxSizeOfInstructionsToCompute, String name) {
+		LoadBalancer.calculationLock.lock();
 		ArrayList<InstructionDTO> instructionsToCompute = new ArrayList<InstructionDTO>();
 		boolean arrayIsFull = false;
-		int instructionsLeft = 0;
-		for (int i = 0; i < this.instructions.size(); i++) {
-			if (this.instructions.get(i).canBeCalculated()) {
-				instructionsLeft += 1;
+		for (int i = 0; i < LoadBalancer.instructions.size(); i++) {
+			if (LoadBalancer.instructions.get(i).canBeCalculated()) {
 				if (! arrayIsFull) {
-					instructionsToCompute.add(this.instructions.get(i));
-					this.instructions.get(i).setIsBeingCalculated(true);
+					instructionsToCompute.add(LoadBalancer.instructions.get(i));
+					LoadBalancer.instructions.get(i).setIsBeingCalculated(true);
 					if (instructionsToCompute.size() >= maxSizeOfInstructionsToCompute) {
 						arrayIsFull = true;
 					}
 				}
 			}
 		}
-		if (instructionsToCompute.size() == 0) {
-			this.hasInstructions = false;
-		}
-		this.calculationLock.unlock();
+		LoadBalancer.calculationLock.unlock();
 		return instructionsToCompute;
+	}
+}
+
+class MultithreadingExecute extends Thread 
+{ 
+    public void run() {
+		LoadBalancer.executeInstructions(Thread.currentThread().getName());
+    } 
+}
+
+class HandleStopOperation extends Thread
+{
+	public void run() {
+		while (LoadBalancer.hasInstructions) {
+			int remaining = 0;
+			for (int i = 0; i < LoadBalancer.instructions.size(); i++) {
+				if (! LoadBalancer.instructions.get(i).isFinished()) {
+					remaining += 1;
+				}
+			}
+			if (remaining == 0) {
+				LoadBalancer.hasInstructions = false;
+			}
+		}
 	}
 }
 

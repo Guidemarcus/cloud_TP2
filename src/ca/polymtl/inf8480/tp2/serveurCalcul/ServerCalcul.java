@@ -27,8 +27,8 @@ import ca.polymtl.inf8480.tp2.shared.CanPerformCalculationException;
 
 public class ServerCalcul implements ServerCalculInterface {
 	private static int nInstructions = 0;
-	private final Lock canPerformlock = new ReentrantLock(true);
-	private final Lock calculationLock = new ReentrantLock(true);
+	private static Lock canPerformlock = new ReentrantLock(true);
+	private static Lock calculationLock = new ReentrantLock(true);
 	
 	public static void main(String[] args) throws Exception {
 		if (args.length != 4) {
@@ -106,14 +106,15 @@ public class ServerCalcul implements ServerCalculInterface {
 	public int calculate(ArrayList<InstructionDTO> instructions) throws RemoteException, OperandInvalidException, CanPerformCalculationException {
 		this.canPerformlock.lock();
 		try {
-			if (!this.canPerformCalculation(this.calculateT(this.nInstructions + instructions.size()))) {
+			if (! this.canPerformCalculation(this.calculateT(ServerCalcul.nInstructions + instructions.size()))) {
 				throw new CanPerformCalculationException("Cannot perform this calculation");
 			}
-			this.nInstructions += instructions.size();
 		} catch(CanPerformCalculationException e) {
+			this.canPerformlock.unlock();
 			throw e;
 		}
 		this.canPerformlock.unlock();
+		ServerCalcul.nInstructions += instructions.size();
 		
 		this.calculationLock.lock();
 		int response = 0;
@@ -123,9 +124,10 @@ public class ServerCalcul implements ServerCalculInterface {
 			} else if (instruction.getOperation().equals(InstructionDTO.OPERATION_PRIME)) {
 				response = (response + Operations.prime(instruction.getOperande())) % 4000;
 			} else {
+				this.calculationLock.unlock();
 				throw new OperandInvalidException("Invalid operation");
 			}
-			response = transformResponseWithMaliciousness(response);
+			//response = transformResponseWithMaliciousness(response);
 		}
 		
 		this.nInstructions -= instructions.size();
