@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.TimeUnit;
 
 import ca.polymtl.inf8480.tp2.shared.ServerCalculInterface;
 import ca.polymtl.inf8480.tp2.shared.ServiceDeNomInterface;
@@ -104,7 +105,6 @@ public class ServerCalcul implements ServerCalculInterface {
 	 */
 	 @Override
 	public int calculate(ArrayList<InstructionDTO> instructions) throws RemoteException, OperandInvalidException, CanPerformCalculationException {
-		System.out.println("We have " + this.nInstructions + " instructions right now");
 		this.canPerformlock.lock();
 		try {
 			if (! this.canPerformCalculation(this.calculateT(ServerCalcul.nInstructions + instructions.size()))) {
@@ -128,11 +128,12 @@ public class ServerCalcul implements ServerCalculInterface {
 				this.calculationLock.unlock();
 				throw new OperandInvalidException("Invalid operation");
 			}
-			response = transformResponseWithMaliciousness(response);
+			response = transformResponseWithMaliciousness(response) % 4000;
 		}
 		
 		this.nInstructions -= instructions.size();
 		this.calculationLock.unlock();
+		System.out.println("We have " + this.nInstructions + " instructions right now");
 		
 		return response;
 	}

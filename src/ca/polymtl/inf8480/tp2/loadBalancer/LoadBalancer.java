@@ -182,6 +182,10 @@ public class LoadBalancer implements LoadBalancerInterface {
 					} catch (OperandInvalidException e) {
 						System.out.println("Hit inside the inner OperandInvalidException");
 					} catch (RemoteException e) {
+						if (LoadBalancer.serviceDeNomStub.removeCalculServer(serveurDeCalcul.getHostName())) {
+							System.out.println("The server de calcul was removed from the available servers");
+							System.out.println("We lost the connection with him...");
+						}
 						System.out.println("Hit inside the inner RemoteException");
 					} catch (NotBoundException e) {
 						System.out.println("Hit inside the inner not bound exception");
@@ -194,6 +198,8 @@ public class LoadBalancer implements LoadBalancerInterface {
 				}
 			} catch (RemoteException e) {
 				System.out.println("Hit inside the outer RemoteException");
+			} catch (Exception e) {
+				System.out.println("Hit inside the outer Exeption");
 			}
 		}
 		long finish = System.currentTimeMillis();

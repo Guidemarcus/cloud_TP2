@@ -121,14 +121,18 @@ public class ServiceDeNom implements ServiceDeNomInterface {
 	 */
 	@Override
 	public boolean removeCalculServer(String hostName) throws RemoteException {
-		for (ServeurDisponibleDTO server : this.serveursDisponibles) {
-			if (server.getHostName().equals(hostName)) {
-				this.serveursDisponibles.remove(server);
-				return true;
+		try {
+			for (ServeurDisponibleDTO server : this.serveursDisponibles) {
+				if (server.getHostName().equals(hostName)) {
+					this.serveursDisponibles.remove(server);
+					return true;
+				}
 			}
+			return false;
+		} catch (Exception e) {
+			// Prevent out of bound
+			return false;
 		}
-		
-		return false;
 	}
 	
 	/*
