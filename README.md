@@ -1,6 +1,6 @@
-#Guide pour faire une simulation
+# Guide pour faire une simulation
 Si l'on veut faire la simulation suivante dans le local L4712: <br/>
-- 1 Client br/>
+- 1 Client <br/>
 - 1 Service de nom <br/>
 - 1 Repartiteur de charge <br/>
 - n Serveur de calcul <br/>
@@ -17,7 +17,9 @@ rmiregistry 5001 // Partir rmiregistry sur le port 5001
 ```
 Dans un autre terminal executer les commandes suivantes
 ```
-ssh L4712-16 // Se connecter a une machine du local L4712 *Note: La machine doit etre la meme que celle du rmiregistry
+// Se connecter a une machine du local L4712
+// Note: La machine doit etre la meme que celle du rmiregistry
+ssh L4712-16
 cd pathVersDossierDuProjet
 ./serviceDeNom.sh
 ```
@@ -32,7 +34,9 @@ rmiregistry 5001 // Partir rmiregistry sur le port 5001
 ```
 Dans un autre terminal executer les commandes suivantes
 ```
-ssh L4712-17 // Se connecter a une machine du local L4712 *Note: La machine doit etre la meme que celle du rmiregistry
+// Se connecter a une machine du local L4712
+// Note: La machine doit etre la meme que celle du rmiregistry
+ssh L4712-17
 cd pathVersDossierDuProjet
 ./loadBalancer.sh
 ```
@@ -48,7 +52,9 @@ rmiregistry 5001 // Partir rmiregistry sur le port 5001
 ```
 Dans un autre terminal executer les commandes suivantes
 ```
-ssh L4712-18 // Se connecter a une machine du local L4712 *Note: La machine doit etre la meme que celle du rmiregistry
+// Se connecter a une machine du local L4712
+// Note: La machine doit etre la meme que celle du rmiregistry
+ssh L4712-18
 cd pathVersDossierDuProjet
 ./serverCalcul.sh 5 0 // 1er argument: Capacite (C), 2e argument: Maliciousness (Nombre entre 0 et 100).
 ```
