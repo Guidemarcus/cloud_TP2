@@ -5,8 +5,6 @@ Si l'on veut faire la simulation suivante dans le local L4712: <br/>
 - 1 Repartiteur de charge <br/>
 - n Serveur de calcul <br/>
 
-Voici les etapes a faire: <br />
-
 # Service de nom
 Dans un terminal executer les commandes suivantes
 ```
@@ -65,5 +63,3 @@ Dans un terminal executer les commandes suivantes
 cd pathVersDossierDuProjet
 ./client.sh ./operations-588 0 // 1er argument: Chemin vers le fichier d'operations, 2e argument: Mode 1=Securise 0=Non-securise
 ```
-
-Done :)
