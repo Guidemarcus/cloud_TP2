@@ -6,14 +6,14 @@ Si l'on veut faire la simulation suivante dans le local L4712: <br/>
 - n Serveur de calcul <br/>
 
 # Service de nom
-Dans un terminal executer les commandes suivantes
+Dans un terminal, ex�cutez les commandes suivantes
 ```
 ssh L4712-16 // Se connecter a une machine du local L4712
 cd pathVersDossierDuProjet
-cd bin // Se deplacer vers le dossier bin du projet
+cd bin // Se d�placer vers le dossier bin du projet
 rmiregistry 5001 // Partir rmiregistry sur le port 5001
 ```
-Dans un autre terminal executer les commandes suivantes
+Dans un autre terminal, ex�cutez les commandes suivantes
 ```
 // Se connecter a une machine du local L4712
 // Note: La machine doit etre la meme que celle du rmiregistry
@@ -23,14 +23,14 @@ cd pathVersDossierDuProjet
 ```
 
 # Repartiteur de charge
-Dans un terminal executer les commandes suivantes
+Dans un terminal, ex�cutez les commandes suivantes
 ```
 ssh L4712-17 // Se connecter a une machine du local L4712
 cd pathVersDossierDuProjet
-cd bin // Se deplacer vers le dossier bin du projet
+cd bin // Se d�placer vers le dossier bin du projet
 rmiregistry 5001 // Partir rmiregistry sur le port 5001
 ```
-Dans un autre terminal executer les commandes suivantes
+Dans un autre terminal, ex�cutez les commandes suivantes
 ```
 // Se connecter a une machine du local L4712
 // Note: La machine doit etre la meme que celle du rmiregistry
@@ -40,15 +40,15 @@ cd pathVersDossierDuProjet
 ```
 
 # Serveur de calcul
-On peut executer ces commandes sur autant de machine differentes selon le nombre de serveurs de calcul qu'on veut.
-Dans un terminal executer les commandes suivantes
+On peut ex�cuter ces commandes sur autant de machines diff�rentes selon le nombre de serveurs de calcul qu'on veut.
+Dans un terminal, ex�cutez les commandes suivantes
 ```
 ssh L4712-18 // Se connecter a une machine du local L4712
 cd pathVersDossierDuProjet
-cd bin // Se deplacer vers le dossier bin du projet
+cd bin // Se d�placer vers le dossier bin du projet
 rmiregistry 5001 // Partir rmiregistry sur le port 5001
 ```
-Dans un autre terminal executer les commandes suivantes
+Dans un autre terminal, ex�cutez les commandes suivantes
 ```
 // Se connecter a une machine du local L4712
 // Note: La machine doit etre la meme que celle du rmiregistry
@@ -58,8 +58,8 @@ cd pathVersDossierDuProjet
 ```
 
 # Client
-Dans un terminal executer les commandes suivantes
+Dans un terminal, ex�cutez les commandes suivantes
 ```
 cd pathVersDossierDuProjet
-./client.sh ./operations-588 0 // 1er argument: Chemin vers le fichier d'operations, 2e argument: Mode 1=Securise 0=Non-securise
+./client.sh ./operations-588 0 // 1er argument: Chemin vers le fichier d'op�rations, 2e argument: Mode 1=Securise 0=Non-securise
 ```
