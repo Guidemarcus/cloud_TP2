@@ -1,0 +1,87 @@
+Test de performance - Mode securise
+Fichier: operations-588 (1600 operations au lieu de 100)
+Resultats:
+1)  3884 millisecondes
+2)  3782 millisecondes
+3)  3155 millisecondes
+4)  3691 millisecondes
+5)  2905 millisecondes
+6)  2472 millisecondes
+7)  4240 millisecondes
+8)  4650 millisecondes
+9)  2393 millisecondes
+10) 4140 millisecondes
+
+Test de performance - Mode securise
+File: operations-588 (1600 operations au lieu de 100)
+Resultats:
+1)  2495 millisecondes
+2)  2909 millisecondes
+3)  2252 millisecondes
+4)  2632 millisecondes
+5)  2143 millisecondes
+6)  2223 millisecondes
+7)  2883 millisecondes
+8)  2638 millisecondes
+9)  2747 millisecondes
+10) 3282 millisecondes
+
+Test de performance - Mode securise
+File: operations-588 (1600 operations au lieu de 100)
+Resultats:
+1)  1332 millisecondes
+2)  2189 millisecondes
+3)  2292 millisecondes
+4)  2126 millisecondes
+5)  1478 millisecondes
+6)  1888 millisecondes
+7)  1627 millisecondes
+8)  1600 millisecondes
+9)  1748 millisecondes
+10) 2255 millisecondes
+
+Test de performance - Mode non securise
+Mode: Trois serveurs de bonne foi avec C=5.
+File: operations-588 (1600 operations au lieu de 100)
+Resultats:
+1)  4788 millisecondes
+2)  3896 millisecondes
+3)  4518 millisecondes
+4)  4784 millisecondes
+5)  4510 millisecondes
+6)  5445 millisecondes
+7)  4825 millisecondes
+8)  4863 millisecondes
+9)  4346 millisecondes
+10) 4828 millisecondes
+
+Test de performance - Mode non securise
+Mode: Un serveur malicieux 50% du temps, deux autres serveurs de bonne fois.
+File: operations-588 (1600 operations au lieu de 100)
+Resultats:
+1)  4574 millisecondes
+2)  5476 millisecondes
+3)  4902 millisecondes
+4)  4934 millisecondes
+5)  5451 millisecondes
+6)  5132 millisecondes
+7)  5671 millisecondes
+8)  5239 millisecondes
+9)  5112 millisecondes
+10) 5790 millisecondes
+
+Test de performance - Mode non securise
+Mode: Un serveur malicieux 75% du temps, deux autres serveurs de bonne foi.
+File: operations-588 (1600 operations au lieu de 100)
+Resultats:
+1)  4253 millisecondes
+2)  5001 millisecondes
+3)  4602 millisecondes
+4)  5602 millisecondes
+5)  5528 millisecondes
+6)  4999 millisecondes
+7)  6004 millisecondes
+8)  6162 millisecondes
+9)  5543 millisecondes
+10) 5594 millisecondes
+
