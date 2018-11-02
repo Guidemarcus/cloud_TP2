@@ -11,6 +11,7 @@ import ca.polymtl.inf8480.tp2.shared.LoadBalancerInterface;
 import ca.polymtl.inf8480.tp2.shared.ServiceDeNomInterface;
 
 import ca.polymtl.inf8480.tp2.shared.ServeurDisponibleDTO;
+import ca.polymtl.inf8480.tp2.shared.ResponseDTO;
 
 public class Client {
 	private LoadBalancerInterface loadBalancerStub = null;
@@ -41,7 +42,9 @@ public class Client {
 		try {
 			Registry registry = LocateRegistry.getRegistry(this.serviceDeNomStub.getLoadBalancer().getHostName(), 5001);
 			stub = (LoadBalancerInterface) registry.lookup("load_balancer");
-			stub.execute(path, mode);
+			ResponseDTO responseDTO = stub.execute(path, mode);
+			System.out.println("The response is " + responseDTO.getResponse());
+			System.out.println("The calculation took " + responseDTO.getTime() + " milliseconds");
 		} catch (NotBoundException e) {
 			System.out.println("Erreur: Le nom '" + e.getMessage()
 					+ "' n'est pas défini dans le registre.");

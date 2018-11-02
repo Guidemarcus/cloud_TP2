@@ -24,6 +24,7 @@ import ca.polymtl.inf8480.tp2.shared.InstructionDTO;
 import ca.polymtl.inf8480.tp2.shared.CanPerformCalculationException;
 import ca.polymtl.inf8480.tp2.shared.OperandInvalidException;
 import ca.polymtl.inf8480.tp2.shared.ServerCalculInterface;
+import ca.polymtl.inf8480.tp2.shared.ResponseDTO;
 
 public class LoadBalancer implements LoadBalancerInterface {
 	public static ArrayList<InstructionDTO> instructions = new ArrayList<InstructionDTO>();
@@ -111,7 +112,7 @@ public class LoadBalancer implements LoadBalancerInterface {
 	}
 	
 	@Override
-	public void execute(String path, String mode) throws RemoteException {
+	public ResponseDTO execute(String path, String mode) throws RemoteException {
 		this.securise = mode.equals("1") ? true : false; 
 		this.instructions.clear();
 		this.hasInstructions = true;
@@ -120,11 +121,22 @@ public class LoadBalancer implements LoadBalancerInterface {
 		Thread stopThread = new Thread(new HandleStopOperation());
         stopThread.start();
 		
-		int n = 6; // Number of threads 
+		int n = LoadBalancer.instructions.size(); // Number of threads 
         for (int i = 0; i < n; i++) { 
             Thread executeThread = new Thread(new MultithreadingExecute()); 
             executeThread.start();
         }
+        long startTime = System.currentTimeMillis();
+        while (LoadBalancer.hasInstructions) {
+			System.out.println("Calculating...");
+		}
+        long endTime   = System.currentTimeMillis();
+        int total = 0;
+		for (InstructionDTO instruction : LoadBalancer.instructions) {
+			total = (total + instruction.getResponse()) % 4000;
+		}
+		
+        return new ResponseDTO(total, endTime - startTime);
 	}
 	
 	/*
@@ -158,7 +170,6 @@ public class LoadBalancer implements LoadBalancerInterface {
 	 * @return void
 	 */
 	public static void executeInstructions(String name) {
-		long start = System.currentTimeMillis();
 		while (LoadBalancer.hasInstructions) {
 			try {
 				ArrayList<InstructionDTO> localInstructions = LoadBalancer.getInstructions(1, name);
@@ -173,7 +184,7 @@ public class LoadBalancer implements LoadBalancerInterface {
 						int response = stub.calculate(localInstructions);
 						for (int i = 0; i < localInstructions.size(); i++) {
 							localInstructions.get(i).setResponse(response);
-							System.out.println("Inserting at index " + localInstructions.get(i).getIndex() + " the value " + localInstructions.get(i).getResponse());
+							//System.out.println("Inserting at index " + localInstructions.get(i).getIndex() + " the value " + localInstructions.get(i).getResponse());
 							LoadBalancer.instructions.set(localInstructions.get(i).getIndex(), localInstructions.get(i));
 						}
 						break;
@@ -202,14 +213,6 @@ public class LoadBalancer implements LoadBalancerInterface {
 				System.out.println("Hit inside the outer Exeption");
 			}
 		}
-		long finish = System.currentTimeMillis();
-		long timeElapsed = finish - start;
-		System.out.println("Time is : " + timeElapsed);
-		int total = 0;
-		for (InstructionDTO instruction : LoadBalancer.instructions) {
-			total = (total + instruction.getResponse()) % 4000;
-		}
-		System.out.println("The response is :" + total);
 	}
 	
 	/*
@@ -254,6 +257,7 @@ class HandleStopOperation extends Thread
 					remaining += 1;
 				}
 			}
+			System.out.println("Remaining " + remaining);
 			if (remaining == 0) {
 				LoadBalancer.hasInstructions = false;
 			}

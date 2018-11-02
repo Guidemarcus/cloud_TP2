@@ -48,12 +48,14 @@ public class InstructionDTO implements Serializable {
 	}
 	
 	public void setResponse(int response) {
-		if (this.response == response) {
+		if (this.response == response && response < 4000) {
 			this.isConfirmed = true;
 		}
-		this.response = response;
-		this.isBeingCalculated = false;
-		this.hasResponse = true;
+		if (response < 4000) {
+			this.response = response;
+			this.isBeingCalculated = false;
+			this.hasResponse = true;
+		}
 	}
 	
 	public int getResponse() {

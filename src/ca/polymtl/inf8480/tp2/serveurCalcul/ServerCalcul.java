@@ -128,12 +128,12 @@ public class ServerCalcul implements ServerCalculInterface {
 				this.calculationLock.unlock();
 				throw new OperandInvalidException("Invalid operation");
 			}
-			response = transformResponseWithMaliciousness(response) % 4000;
+			response = transformResponseWithMaliciousness(response);
 		}
 		
 		this.nInstructions -= instructions.size();
+		//System.out.println("We have " + this.nInstructions + " instructions right now");
 		this.calculationLock.unlock();
-		System.out.println("We have " + this.nInstructions + " instructions right now");
 		
 		return response;
 	}
@@ -148,7 +148,7 @@ public class ServerCalcul implements ServerCalculInterface {
 		Random random = new Random();
 		int randomNumber = random.nextInt(100 + 1);
 		if (randomNumber < this.maliciousness) {
-			return random.nextInt(100000); // Return a wrong answer
+			return random.nextInt(10000) + 5000; // Return a wrong answer
 		}
 		
 		return oldResponse;
